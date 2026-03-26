@@ -1,0 +1,82 @@
+version: '3.8'
+
+# Main docker-compose for local development
+# For production, use individual compose files on separate machines
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: coder-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=False
+      - DATABASE_URL=sqlite:////app/data/coder.db
+      - PORT=5000
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bitcoin-network
+
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: coder-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://backend:5000
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - bitcoin-network
+
+  # Example miner (can be scaled or run separately)
+  miner-1:
+    build:
+      context: ./backend
+      dockerfile: ./miner/Dockerfile
+    container_name: bitcoin-miner-1
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_DEBUG=False
+      - DATABASE_URL=sqlite:////app/data/miner_1.db
+      - PORT=5001
+      - BACKEND_URL=http://backend:5000
+      - MINER_ID=1
+      - MINER_NAME=Miner-1
+    volumes:
+      - ./miner/data:/app/data
+      - ./backend:/app
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - bitcoin-network
+    # Uncomment to expose miner port
+    # ports:
+    #   - "5001:5001"
+
+networks:
+  bitcoin-network:
+    driver: bridge
+
+volumes:
+  backend_data:
+  miner_data:

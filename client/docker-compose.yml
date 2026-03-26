@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  gpu-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gpu-client-${CLIENT_ID:-default}
+    environment:
+      - BACKEND_URL=${BACKEND_URL:-http://localhost:5000}
+      - CLIENT_ID=${CLIENT_ID:-default}
+      - OLLAMA_HOST=0.0.0.0:11434
+    # GPU access - requires NVIDIA Container Toolkit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ports:
+      - "11434:11434"  # Ollama API
+    volumes:
+      - ./data:/app/data
+      - ollama_data:/root/.ollama  # Persist Ollama models
+    restart: unless-stopped
+    networks:
+      - bitcoin-network
+    depends_on:
+      - backend
+
+networks:
+  bitcoin-network:
+    external: true
+    name: bitcoin-network
+
+volumes:
+  ollama_data:

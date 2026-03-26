@@ -1,0 +1,160 @@
+.find-in-files-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 100px;
+}
+
+.find-in-files {
+  background: var(--theme-menu-dropdown-bg, #252526);
+  border: 1px solid var(--theme-border, #3e3e42);
+  border-radius: 4px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.find-in-files-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--theme-border, #3e3e42);
+}
+
+.find-in-files-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.find-in-files-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--theme-input-bg, #3c3c3c);
+  border: 1px solid var(--theme-border, #3e3e42);
+  border-radius: 2px;
+  color: var(--theme-fg, #cccccc);
+  font-size: 13px;
+  outline: none;
+}
+
+.find-in-files-input:focus {
+  border-color: var(--theme-accent, #007acc);
+}
+
+.find-in-files-options {
+  display: flex;
+  gap: 4px;
+}
+
+.find-option-btn {
+  padding: 6px 10px;
+  background: var(--theme-button-bg, #0e639c);
+  border: 1px solid var(--theme-border, #3e3e42);
+  border-radius: 2px;
+  color: var(--theme-fg, #cccccc);
+  cursor: pointer;
+  font-size: 11px;
+  transition: background 0.2s;
+}
+
+.find-option-btn:hover {
+  background: var(--theme-button-hover-bg, #1177bb);
+}
+
+.find-option-btn.active {
+  background: var(--theme-accent, #007acc);
+  color: white;
+}
+
+.find-in-files-results {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(70vh - 80px);
+}
+
+.find-in-files-loading,
+.find-in-files-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--theme-fg-secondary, #858585);
+  font-size: 13px;
+}
+
+.find-in-files-summary {
+  padding: 8px 12px;
+  background: var(--theme-header-bg, #2d2d30);
+  border-bottom: 1px solid var(--theme-border, #3e3e42);
+  font-size: 11px;
+  color: var(--theme-fg-secondary, #858585);
+}
+
+.find-in-files-file-group {
+  border-bottom: 1px solid var(--theme-border, #3e3e42);
+}
+
+.find-in-files-file-name {
+  padding: 8px 12px;
+  background: var(--theme-header-bg, #2d2d30);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-fg, #cccccc);
+  border-bottom: 1px solid var(--theme-border, #3e3e42);
+}
+
+.find-in-files-result {
+  display: flex;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+  gap: 12px;
+}
+
+.find-in-files-result:hover {
+  background: var(--theme-menu-dropdown-hover, #37373d);
+}
+
+.find-in-files-result.selected {
+  background: var(--theme-accent, #007acc);
+  color: white;
+}
+
+.find-in-files-line-number {
+  min-width: 50px;
+  text-align: right;
+  color: var(--theme-fg-secondary, #858585);
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.find-in-files-result.selected .find-in-files-line-number {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.find-in-files-content {
+  flex: 1;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.find-in-files-content mark {
+  background: var(--theme-accent, #007acc);
+  color: white;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.find-in-files-result.selected .find-in-files-content mark {
+  background: rgba(255, 255, 255, 0.3);
+}

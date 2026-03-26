@@ -1,0 +1,120 @@
+.go-to-symbol-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 100px;
+}
+
+.go-to-symbol {
+  background: var(--theme-menu-dropdown-bg, #252526);
+  border: 1px solid var(--theme-border, #3e3e42);
+  border-radius: 4px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.go-to-symbol-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--theme-border, #3e3e42);
+}
+
+.go-to-symbol-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--theme-input-bg, #3c3c3c);
+  border: 1px solid var(--theme-border, #3e3e42);
+  border-radius: 2px;
+  color: var(--theme-fg, #cccccc);
+  font-size: 13px;
+  outline: none;
+}
+
+.go-to-symbol-input:focus {
+  border-color: var(--theme-accent, #007acc);
+}
+
+.go-to-symbol-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(60vh - 60px);
+}
+
+.go-to-symbol-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--theme-fg-secondary, #858585);
+  font-size: 13px;
+}
+
+.go-to-symbol-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+  gap: 12px;
+}
+
+.go-to-symbol-item:hover {
+  background: var(--theme-menu-dropdown-hover, #37373d);
+}
+
+.go-to-symbol-item.selected {
+  background: var(--theme-accent, #007acc);
+  color: white;
+}
+
+.go-to-symbol-icon {
+  width: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--theme-fg-secondary, #858585);
+}
+
+.go-to-symbol-item.selected .go-to-symbol-icon {
+  color: white;
+}
+
+.go-to-symbol-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.go-to-symbol-kind {
+  font-size: 11px;
+  color: var(--theme-fg-secondary, #858585);
+  text-transform: capitalize;
+  padding: 2px 6px;
+  background: var(--theme-header-bg, #2d2d30);
+  border-radius: 2px;
+}
+
+.go-to-symbol-item.selected .go-to-symbol-kind {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.go-to-symbol-line {
+  font-size: 11px;
+  color: var(--theme-fg-secondary, #858585);
+  font-family: 'Courier New', monospace;
+  min-width: 40px;
+  text-align: right;
+}
+
+.go-to-symbol-item.selected .go-to-symbol-line {
+  color: rgba(255, 255, 255, 0.8);
+}
