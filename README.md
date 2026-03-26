@@ -1,6 +1,6 @@
 # Coder
 
-A full-stack **code and AI workspace**: React + TypeScript frontend (Vite, Monaco Editor) and a **Python Flask** backend with authentication, projects, a code editor API, design docs, LLM chat/management, and GPU management. Optional **Docker Compose** runs the API, web UI, and an example miner service.
+An online IDE platform with an AI coding assistant: a browser-based environment to write and organize code while the AI helps in your workspace—backed by a **React + TypeScript** frontend (Vite, Monaco Editor) and a **Python Flask** API (auth, projects, code editor, design docs, LLM chat/management, GPU management). Run locally or with **Docker Compose**.
 
 ## Features
 
@@ -124,4 +124,4 @@ To use PostgreSQL or MySQL, set `DATABASE_URL` accordingly in the environment or
 
 ## License
 
-See the repository for license terms if provided; otherwise treat as private/internal unless stated otherwise.
+[Apache License 2.0](LICENSE).
