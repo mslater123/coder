@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Job Executor - Executes tasks on GPU or CPU
-Supports mining, AI training, AI inference, and general system tasks
+Supports AI training, AI inference, Ollama LLM, and general system tasks
 """
 
 import subprocess
@@ -56,9 +56,7 @@ class JobExecutor:
     def _execute(self):
         """Execute the job based on task type"""
         try:
-            if self.task_type == 'mining':
-                self._execute_mining()
-            elif self.task_type == 'ai_training':
+            if self.task_type == 'ai_training':
                 self._execute_ai_training()
             elif self.task_type == 'ai_inference':
                 self._execute_ai_inference()
@@ -73,121 +71,6 @@ class JobExecutor:
                 self.error_callback(self.task_id, str(e))
         finally:
             self.is_running = False
-    
-    def _execute_mining(self):
-        """Execute Bitcoin mining on GPU"""
-        print(f"[Task {self.task_id}] Starting GPU mining...")
-        
-        # Check if CUDA is available
-        use_cuda = self._check_cuda_available()
-        
-        if use_cuda:
-            self._execute_cuda_mining()
-        else:
-            # Fallback to CPU mining
-            self._execute_cpu_mining()
-    
-    def _execute_cuda_mining(self):
-        """Execute mining using CUDA"""
-        try:
-            import pycuda.driver as cuda
-            import pycuda.autoinit
-            from pycuda.compiler import SourceModule
-            import hashlib
-            
-            # Simple CUDA mining kernel
-            mining_kernel = """
-            __global__ void mine_sha256(unsigned int *nonce, unsigned int *target, int *found) {
-                int idx = blockIdx.x * blockDim.x + threadIdx.x;
-                unsigned int local_nonce = nonce[0] + idx;
-                
-                // Simple hash computation (simplified for demo)
-                unsigned int hash = local_nonce;
-                hash = hash * 1103515245 + 12345;
-                
-                if (hash < target[0]) {
-                    found[0] = 1;
-                    nonce[0] = local_nonce;
-                }
-            }
-            """
-            
-            mod = SourceModule(mining_kernel)
-            mine_func = mod.get_function("mine_sha256")
-            
-            nonce = cuda.mem_alloc(4)
-            target = cuda.mem_alloc(4)
-            found = cuda.mem_alloc(4)
-            
-            difficulty = self.config.get('difficulty', 4)
-            target_value = int(2 ** (256 - difficulty))
-            
-            cuda.memcpy_htod(target, target_value.to_bytes(4, 'little'))
-            cuda.memcpy_htod(nonce, (0).to_bytes(4, 'little'))
-            cuda.memcpy_htod(found, (0).to_bytes(4, 'little'))
-            
-            hashes = 0
-            start_time = time.time()
-            
-            while self.is_running:
-                mine_func(nonce, target, found, block=(256, 1, 1), grid=(1024, 1))
-                
-                result = cuda.mem_alloc(4)
-                cuda.memcpy_dtoh(result, found)
-                
-                hashes += 256 * 1024
-                
-                # Update progress
-                elapsed = time.time() - start_time
-                self.progress = min(100.0, (elapsed / 3600.0) * 100)  # 1 hour = 100%
-                
-                if self.progress_callback:
-                    self.progress_callback(self.task_id, self.progress, {
-                        'hashes': hashes,
-                        'hash_rate': hashes / elapsed if elapsed > 0 else 0
-                    })
-                
-                time.sleep(1)
-                
-        except ImportError:
-            print("PyCUDA not available, falling back to CPU mining")
-            self._execute_cpu_mining()
-        except Exception as e:
-            print(f"CUDA mining error: {e}")
-            self._execute_cpu_mining()
-    
-    def _execute_cpu_mining(self):
-        """Execute mining on CPU"""
-        print(f"[Task {self.task_id}] Starting CPU mining...")
-        
-        import hashlib
-        import random
-        
-        difficulty = self.config.get('difficulty', 4)
-        target = 2 ** (256 - difficulty)
-        hashes = 0
-        start_time = time.time()
-        
-        while self.is_running:
-            # Generate random nonce
-            nonce = random.randint(0, 2**32)
-            data = f"{nonce}{time.time()}".encode()
-            hash_result = hashlib.sha256(data).hexdigest()
-            
-            hashes += 1
-            
-            # Update progress every 1000 hashes
-            if hashes % 1000 == 0:
-                elapsed = time.time() - start_time
-                self.progress = min(100.0, (elapsed / 3600.0) * 100)
-                
-                if self.progress_callback:
-                    self.progress_callback(self.task_id, self.progress, {
-                        'hashes': hashes,
-                        'hash_rate': hashes / elapsed if elapsed > 0 else 0
-                    })
-            
-            time.sleep(0.001)  # Small delay to prevent CPU overload
     
     def _execute_ai_training(self):
         """Execute AI model training"""
@@ -493,16 +376,3 @@ class JobExecutor:
                 'done': True,
                 'note': 'Ollama not available, using simulation'
             })
-    
-    def _check_cuda_available(self):
-        """Check if CUDA is available"""
-        try:
-            import pycuda.driver as cuda
-            cuda.init()
-            return cuda.Device.count() > 0
-        except:
-            try:
-                import torch
-                return torch.cuda.is_available()
-            except:
-                return False

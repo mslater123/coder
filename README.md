@@ -1,6 +1,10 @@
-# Coder
+# Web Coder
 
 An online IDE platform with an AI coding assistant: a browser-based environment to write and organize code while the AI helps in your workspace—backed by a **React + TypeScript** frontend (Vite, Monaco Editor) and a **Python Flask** API (auth, projects, code editor, design docs, LLM chat/management, GPU management). Run locally or with **Docker Compose**.
+
+## Screenshot
+
+![Web Coder — browser IDE with Monaco editor, file explorer, AI Assistant, and Auto App Builder](documents/coder.png)
 
 ## Features
 
@@ -16,11 +20,12 @@ An online IDE platform with an AI coding assistant: a browser-based environment 
 ### Backend (`backend/`)
 
 - **REST API** with SQLAlchemy and SQLite by default (`coder.db`)
-- **Blueprints registered in `app.py`:**  
+- **Blueprints registered in `backend/src/application.py`:**  
   `/api/auth`, `/api/users`, `/api/projects`, `/api/code-editor`, `/api/design-docs`, `/api/llm`, `/api/llm/manager`, `/api/gpus`
 - **Health check:** `GET /api/health`
+- **Entrypoint:** `backend/app.py` → `create_app()` in `backend/src/application.py`
 
-> The repo also contains older route modules under `backend/routes/` (e.g. mining, wallets, prices) that are **not** registered in the default `app.py`. Use or wire them only if you extend the app.
+> Optional blueprint modules under `backend/src/api/routers/` (e.g. wallets, prices, transactions) are **not** wired in by default. Register them in `application.py` if you need those APIs.
 
 ## Project structure
 
@@ -34,10 +39,10 @@ Coder/
 │   ├── requirements.txt
 │   ├── Dockerfile
 │   └── start.sh / start.bat
+├── client/               # Optional GPU agent client
 ├── documents/            # Extra docs (troubleshooting, GPU setup); see documents/README.md
-├── miner/                # Miner image context (used by compose)
 ├── scripts/              # Helper scripts (e.g. freeing ports)
-├── docker-compose.yml    # Backend + frontend (+ optional miner)
+├── docker-compose.yml    # Backend + frontend
 └── start.sh              # Dev: backend + frontend (repo root)
 ```
 
@@ -54,8 +59,6 @@ docker compose up -d
 - **Health:** `curl http://localhost:5000/api/health`
 
 View logs: `docker compose logs -f` · Stop: `docker compose down` · Rebuild: `docker compose up -d --build`
-
-Compose also defines an optional **miner** service (`miner-1`) that builds from `backend/miner/Dockerfile` and talks to the main backend; adjust or disable it if you do not need it.
 
 ## Manual setup
 
@@ -112,8 +115,8 @@ To use PostgreSQL or MySQL, set `DATABASE_URL` accordingly in the environment or
 
 ## Development notes
 
-- **New API surface:** add a blueprint under `backend/routes/`, then `app.register_blueprint(...)` in `backend/app.py`.  
-- **Models:** define in `backend/models.py` (or split modules as the project grows) and run migrations/schema updates as appropriate for your DB.
+- **New API surface:** add a blueprint under `backend/src/api/routers/`, then `register_blueprint(...)` in `backend/src/application.py`.  
+- **Models:** add or edit modules under `backend/src/models/` and export them from `backend/src/models/__init__.py`; run migrations/schema updates as appropriate for your DB.
 
 ## Technologies
 

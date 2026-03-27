@@ -1,7 +1,7 @@
 // Use Vite proxy in development, or direct URL in production
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-// Mining API removed - platform is now focused on coding with design docs
+// Web Coder API client (projects, editor, LLM, GPUs, etc.)
 
 export interface User {
   id: string;
@@ -649,11 +649,20 @@ export const codeEditorApi = {
         return response.json();
     },
 
-    async writeFile(path: string, content: string, workingDir?: string, projectId?: string, encoding: 'text' | 'base64' = 'text'): Promise<{ success: boolean; path: string }> {
+    async writeFile(path: string, content: string, workingDir?: string, projectId?: string, encoding: 'text' | 'base64' = 'text', options?: { isDirectory?: boolean }): Promise<{ success: boolean; path: string }> {
+        const uid = getCurrentUserId();
         const response = await fetch(`${API_BASE_URL}/api/code-editor/files/write`, {
             method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify({ path, content, working_dir: workingDir, project_id: projectId, encoding }),
+            body: JSON.stringify({
+                path,
+                content,
+                working_dir: workingDir,
+                project_id: projectId,
+                encoding,
+                ...(uid ? { user_id: uid } : {}),
+                ...(options?.isDirectory ? { is_directory: true } : {}),
+            }),
         });
         if (!response.ok) {
             const error = await response.json();

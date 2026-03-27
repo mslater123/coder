@@ -1,10 +1,10 @@
 @echo off
-REM Bitcoin Tracker Backend Startup Script for Windows
+REM Coder backend startup script (Windows)
 REM This script sets up and runs the Flask backend server
 
 setlocal enabledelayedexpansion
 
-echo === Bitcoin Tracker Backend Startup ===
+echo === Coder Backend Startup ===
 echo.
 
 REM Get the directory where the script is located

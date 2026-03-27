@@ -1,105 +1,33 @@
-# Bitcoin Tracker Backend
+# Coder backend
 
-Python Flask backend for Bitcoin tracking and mining simulation.
+Flask API for the **Coder** app: authentication, projects, code editor filesystem, design docs, LLM routes, and GPU management.
 
-## Quick Start
+## Layout
 
-### Option 1: Using the Startup Script (Recommended)
+- **`app.py`** — WSGI entrypoint (adds `backend/` to `sys.path`, builds the app via `create_app()`).
+- **`src/core/`** — App wiring: `app_factory.create_app()`, `config`, `cors`, `db_migrations`, `blueprints`, `health`, `paths`, `exceptions`, `constants`.
+- **`src/application.py`** — Re-exports `create_app` from `src.core.app_factory` (stable import for older docs/tools).
+- **`src/models/`** — SQLAlchemy `db` (`base.py`) and domain modules (user, ledger, gpu, llm, project, etc.).
+- **`src/api/routers/`** — Blueprints (auth, users, projects, code editor, design docs, LLM, GPUs, etc.).
+- **`src/services/`** — Domain/logic helpers used by routers.
+- **`src/schemas/`** — Pydantic models for JSON request validation; use `parse_json(request, Schema)` from `src.schemas.common` in routes when adopting strict validation.
+- **`src/utils/`** — Small shared helpers: `get_current_user_id(request)`, `get_request_json`, `safe_json_loads` / `safe_json_dumps`, `utc_now` / `parse_iso_datetime`, `truncate`, etc.
 
-**On macOS/Linux:**
-```bash
-./start.sh
-```
+## Quick start
 
-**On Windows:**
-```cmd
-start.bat
-```
+**macOS/Linux:** `./start.sh` · **Windows:** `start.bat`
 
-The startup script will automatically:
-- Check Python installation
-- Create virtual environment if needed
-- Install/update dependencies
-- Start the Flask server
+Or manually: `python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python app.py`
 
-### Option 2: Using Make (macOS/Linux)
+API base: `http://localhost:5000` · Health: `GET /api/health`
 
-```bash
-make setup    # First time setup
-make run      # Run the server
-make dev      # Run in development mode
-```
+## Environment
 
-### Option 3: Manual Setup
+- `DATABASE_URL` — SQLAlchemy URL (default: SQLite `instance/coder.db` under `backend/`)
+- `FLASK_APP`, `FLASK_DEBUG`, `PORT`
 
-1. Create a virtual environment:
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+## Default blueprints
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+Registered in `src/application.py`: auth, users, projects, code editor, design docs, LLM + LLM manager, GPUs.
 
-3. Run the server:
-```bash
-python app.py
-```
-
-The API will be available at `http://localhost:5000`
-
-## Environment Variables
-
-You can customize the backend behavior using environment variables:
-
-- `FLASK_APP` - Flask application entry point (default: `app.py`)
-- `FLASK_DEBUG` - Enable debug mode (default: `False`)
-- `DATABASE_URL` - Database connection string (default: SQLite `coder.db` in the Flask `instance` directory)
-- `PORT` - Server port (default: `5000`)
-
-Example:
-```bash
-export FLASK_DEBUG=True
-export PORT=8080
-./start.sh
-```
-
-## API Endpoints
-
-### Legacy Endpoints (for backward compatibility)
-- `GET /api/status` - Get current mining statistics
-- `POST /api/start` - Start mining
-- `POST /api/stop` - Stop mining
-- `POST /api/difficulty` - Set mining difficulty (1-8)
-- `GET /api/health` - Health check endpoint
-
-### Mining Endpoints
-- `GET /api/mining/sessions` - Get all mining sessions
-- `GET /api/mining/sessions/<id>` - Get specific session
-- `POST /api/mining/sessions` - Create new session
-- `PUT /api/mining/sessions/<id>` - Update session
-- `GET /api/mining/sessions/<id>/stats` - Get session statistics
-- `POST /api/mining/sessions/<id>/stats` - Add statistics snapshot
-
-### Price Endpoints
-- `GET /api/price/latest` - Get latest Bitcoin price
-- `GET /api/price/history` - Get price history
-- `POST /api/price/` - Add new price record
-
-### Wallet Endpoints
-- `GET /api/wallets/` - Get all tracked wallets
-- `GET /api/wallets/<address>` - Get specific wallet
-- `POST /api/wallets/` - Create new wallet
-- `PUT /api/wallets/<address>` - Update wallet
-- `GET /api/wallets/<address>/transactions` - Get wallet transactions
-
-### Transaction Endpoints
-- `GET /api/transactions/` - Get all transactions
-- `POST /api/transactions/` - Add new transaction
-- `GET /api/transactions/<txid>` - Get specific transaction
-
-## Note
-
-This is a simplified educational implementation. Real Bitcoin mining requires specialized hardware (ASICs) and is extremely resource-intensive. This simulation demonstrates the concept but cannot mine actual Bitcoin.
+Optional blueprint modules under `src/api/routers/` (e.g. `price_routes`, `wallet_routes`, `transaction_routes`) are **not** registered by default; import and `register_blueprint(...)` in `application.py` if you need them.

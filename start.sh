@@ -86,14 +86,16 @@ echo ""
 echo -e "${BLUE}Starting frontend server...${NC}"
 cd "$SCRIPT_DIR/app"
 
+FRONTEND_PORT="${FRONTEND_PORT:-5173}"
+
 # Check if node_modules exists
 if [ ! -d "node_modules" ]; then
     echo -e "${YELLOW}Installing frontend dependencies...${NC}"
     npm install
 fi
 
-# Run frontend in background and capture PID
-npm run dev > /tmp/frontend.log 2>&1 &
+# Run Vite on http://localhost:5173/ (override with FRONTEND_PORT)
+npm run dev -- --host localhost --port "$FRONTEND_PORT" > /tmp/frontend.log 2>&1 &
 FRONTEND_PID=$!
 
 # Wait a moment for frontend to start
@@ -108,7 +110,7 @@ if ! kill -0 $FRONTEND_PID 2>/dev/null; then
 fi
 
 echo -e "${GREEN}Frontend started (PID: $FRONTEND_PID)${NC}"
-echo -e "${GREEN}Frontend running on: http://localhost:5174${NC}"
+echo -e "${GREEN}Frontend running on: http://localhost:${FRONTEND_PORT}/${NC}"
 echo ""
 echo -e "${GREEN}=== Both servers are running ===${NC}"
 echo -e "${YELLOW}Backend logs: tail -f /tmp/backend.log${NC}"

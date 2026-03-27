@@ -5296,15 +5296,16 @@ IMPORTANT:
     
     try {
       if (useFileSystem) {
-        // Use backend file system - create folder by writing a .gitkeep file
         const { codeEditorApi } = await import('../services/api')
         const workingDir = localDirectory || undefined
-        
-        // Create folder by creating a .gitkeep file inside it
-        // This ensures the folder exists and is visible in the file system
-        const currentProject = projects.find(p => p.id === currentProjectId)
-        const projectName = currentProject?.name || undefined
-        await codeEditorApi.writeFile(`${folderPath}/.gitkeep`, '', workingDir, projectId)
+        const projectId = currentProject?.id || undefined
+        if (!projectId) {
+          console.warn('No project selected, cannot create folder')
+          setEditingFolderName(null)
+          setEditingFolderNameValue('')
+          return
+        }
+        await codeEditorApi.writeFile(folderPath, '', workingDir, projectId, 'text', { isDirectory: true })
         
         // Immediately add folder to the file tree for instant feedback (use relative path)
         const newFolder: FileNode = {

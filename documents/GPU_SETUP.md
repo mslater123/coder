@@ -1,6 +1,6 @@
 # GPU Management System
 
-This platform now includes comprehensive GPU management capabilities for controlling multiple GPUs across different systems for mining and AI tasks.
+Coder includes GPU management for registering machines, assigning work, and tracking utilization across **AI inference**, **training**, **Ollama**, and **system** tasks.
 
 ## Features
 
@@ -12,9 +12,10 @@ This platform now includes comprehensive GPU management capabilities for control
 
 ### 🔧 Task Assignment
 - Assign different tasks to each GPU:
-  - **Mining**: Bitcoin mining operations
-  - **AI Training**: Machine learning model training
-  - **AI Inference**: Model inference/prediction tasks
+  - **AI Training**: machine learning model training
+  - **AI Inference**: inference and prediction
+  - **Ollama / LLM**: local model workloads when used
+  - **System tasks**: scripts and general workloads
 - Track task progress and status
 - Start/stop tasks remotely
 
@@ -150,25 +151,9 @@ services:
 - `CLIENT_ID`: Unique identifier for this client (default: hostname)
 - `UPDATE_INTERVAL`: Status update frequency in seconds (default: 5)
 
-## Task Types
+## Task types
 
-### 1. Bitcoin Mining
-
-Assigns GPU to mine Bitcoin using the mining service:
-
-```json
-{
-  "task_type": "mining",
-  "task_name": "BTC Mining Pool",
-  "config": {
-    "pool_url": "stratum+tcp://pool.example.com:3333",
-    "wallet": "your_btc_address",
-    "difficulty": 4
-  }
-}
-```
-
-### 2. AI Training
+### 1. AI Training
 
 Assigns GPU for machine learning model training:
 
@@ -185,7 +170,7 @@ Assigns GPU for machine learning model training:
 }
 ```
 
-### 3. AI Inference
+### 2. AI Inference
 
 Assigns GPU for model inference:
 
@@ -288,4 +273,4 @@ Assigns GPU for model inference:
 
 ## License
 
-This GPU management system is part of the Bitcoin Miner platform.
+This GPU management system is part of the **Coder** platform.

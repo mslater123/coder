@@ -15,7 +15,7 @@ services:
       - /app/node_modules
     restart: unless-stopped
     networks:
-      - bitcoin-network
+      - coder-network
     depends_on:
       - backend
 
@@ -43,8 +43,8 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - bitcoin-network
+      - coder-network
 
 networks:
-  bitcoin-network:
+  coder-network:
     driver: bridge

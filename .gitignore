@@ -1,40 +1,65 @@
-# Dependencies
+# --- Node / frontend (app, client, etc.) ---
 node_modules/
-**/node_modules/
-backend/venv/
-**/__pycache__/
-*.py[cod]
-*.pyo
-.Python
-*.egg-info/
-.eggs/
-
-# Build outputs
 dist/
-**/dist/
-build/
+dist-ssr/
+*.local
+.vit/
+stats.html
+.eslintcache
 *.tsbuildinfo
 
-# Environment
+# --- Python / backend ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.egg
+*.egg-info/
+.eggs/
+build/
+MANIFEST
+backend/venv/
+venv/
+code/
+.venv/
+ENV/
+env/
+
+# --- Env & secrets ---
 .env
 .env.*
 !.env.example
+.envrc
 
-# Local data & SQLite
+# --- Test & type tooling ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+coverage.xml
+.hypothesis/
+.dmypy.json
+dmypy.json
+nosetests.xml
+
+# --- Local data & SQLite ---
 *.db
 backend/instance/
 backend/data/
 miner/data/
 
-# IDE / OS
+# --- IDE / OS ---
 .DS_Store
 .idea/
+.vscode/*
+!.vscode/extensions.json
 *.swp
 *.swo
 
-# Logs
+# --- Logs ---
 *.log
 logs/
 
-# Vite
-*.local
+# --- Local-only (never push) ---
+/push_to_github.sh

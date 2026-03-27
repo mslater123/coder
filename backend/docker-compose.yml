@@ -32,10 +32,10 @@ services:
       retries: 3
       start_period: 40s
     networks:
-      - bitcoin-network
+      - coder-network
 
 networks:
-  bitcoin-network:
+  coder-network:
     driver: bridge
 
 volumes:

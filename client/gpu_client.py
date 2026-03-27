@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-GPU Client - Detects GPUs on the system and reports to backend
-Can run mining or AI tasks on available GPUs
+GPU Client — detects GPUs, registers with the Coder backend, and runs assigned
+AI / system / Ollama-related tasks.
 """
 
 import requests

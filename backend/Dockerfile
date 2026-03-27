@@ -17,8 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create data directory for database
-RUN mkdir -p /app/data
+# Create data directory for database and project workspaces (host mount should keep these)
+RUN mkdir -p /app/data /app/code && chmod 777 /app/code
 
 # Expose port
 EXPOSE 5000

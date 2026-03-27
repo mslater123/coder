@@ -25,14 +25,12 @@ services:
       - ollama_data:/root/.ollama  # Persist Ollama models
     restart: unless-stopped
     networks:
-      - bitcoin-network
-    depends_on:
-      - backend
+      - coder-network
 
 networks:
-  bitcoin-network:
+  coder-network:
     external: true
-    name: bitcoin-network
+    name: coder-network
 
 volumes:
   ollama_data:

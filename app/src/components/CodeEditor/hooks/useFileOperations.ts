@@ -118,9 +118,15 @@ export function useFileOperations({
     
     try {
       if (useFileSystem) {
+        if (!currentProjectId) {
+          console.error('Create or select a project before adding files (backend requires a project).')
+          setEditingFileName(null)
+          setEditingFileNameValue('')
+          return
+        }
         const { codeEditorApi } = await import('../../services/api')
         const workingDir = localDirectory || undefined
-        await codeEditorApi.writeFile(filePath, '', workingDir)
+        await codeEditorApi.writeFile(filePath, '', workingDir, currentProjectId)
         await loadFilesFromBackend()
       } else {
         if (!currentProjectId) {
@@ -154,7 +160,9 @@ export function useFileOperations({
       setEditingFileName(null)
       setEditingFileNameValue('')
     } catch (err: any) {
-      console.error(`Failed to create file: ${err.message}`)
+      const msg = err?.message || String(err)
+      console.error(`Failed to create file: ${msg}`)
+      window.alert(`Could not create file: ${msg}`)
       setEditingFileName(null)
       setEditingFileNameValue('')
     }
@@ -182,9 +190,15 @@ export function useFileOperations({
     
     try {
       if (useFileSystem) {
+        if (!currentProjectId) {
+          console.error('Create or select a project before adding folders (backend requires a project).')
+          setEditingFolderName(null)
+          setEditingFolderNameValue('')
+          return
+        }
         const { codeEditorApi } = await import('../../services/api')
         const workingDir = localDirectory || undefined
-        await codeEditorApi.writeFile(`${folderPath}/.gitkeep`, '', workingDir)
+        await codeEditorApi.writeFile(folderPath, '', workingDir, currentProjectId, 'text', { isDirectory: true })
         
         const newFolder: FileNode = {
           name: trimmedName,
@@ -246,7 +260,9 @@ export function useFileOperations({
       setEditingFolderName(null)
       setEditingFolderNameValue('')
     } catch (err: any) {
-      console.error(`Failed to create folder: ${err.message}`)
+      const msg = err?.message || String(err)
+      console.error(`Failed to create folder: ${msg}`)
+      window.alert(`Could not create folder: ${msg}`)
       setEditingFolderName(null)
       setEditingFolderNameValue('')
     }
@@ -257,10 +273,15 @@ export function useFileOperations({
     
     try {
       if (useFileSystem) {
+        if (!currentProjectId) {
+          console.error('No project selected; cannot delete files on the server.')
+          setContextMenu(null)
+          return
+        }
         const { codeEditorApi } = await import('../../services/api')
         const workingDir = localDirectory || undefined
         const fullPath = getProjectPath(contextMenu.filePath)
-        await codeEditorApi.deleteFile(fullPath, workingDir)
+        await codeEditorApi.deleteFile(fullPath, workingDir, currentProjectId)
         await loadFilesFromBackend()
       } else {
         setFiles(prev => prev.filter(f => f.path !== contextMenu!.filePath))
@@ -280,10 +301,12 @@ export function useFileOperations({
       }
       setContextMenu(null)
     } catch (err: any) {
-      console.error(`Failed to delete file: ${err.message}`)
+      const msg = err?.message || String(err)
+      console.error(`Failed to delete file: ${msg}`)
+      window.alert(`Could not delete: ${msg}`)
       setContextMenu(null)
     }
-  }, [contextMenu, useFileSystem, localDirectory, getProjectPath, loadFilesFromBackend, setFiles, setOpenTabs, activeTab, openTabs, setActiveTab, setSelectedFile, setCode, saveCurrentProject, setContextMenu])
+  }, [contextMenu, currentProjectId, useFileSystem, localDirectory, getProjectPath, loadFilesFromBackend, setFiles, setOpenTabs, activeTab, openTabs, setActiveTab, setSelectedFile, setCode, saveCurrentProject, setContextMenu])
 
   const handleCopyFile = useCallback(async () => {
     if (!contextMenu) return
@@ -331,6 +354,12 @@ export function useFileOperations({
 
     try {
       if (useFileSystem) {
+        if (!currentProjectId) {
+          console.error('No project selected; cannot rename files on the server.')
+          setRenamingFile(null)
+          setRenamingFileNameValue('')
+          return
+        }
         const { codeEditorApi } = await import('../../services/api')
         const workingDir = localDirectory || undefined
         const oldFullPath = getProjectPath(renamingFile.path)
@@ -339,14 +368,14 @@ export function useFileOperations({
         const oldFile = findFile(renamingFile.path)
         let fileContent = oldFile?.content || ''
         if (!fileContent) {
-          const readResult = await codeEditorApi.readFile(oldFullPath, workingDir)
+          const readResult = await codeEditorApi.readFile(oldFullPath, workingDir, currentProjectId)
           if (readResult.success) {
             fileContent = readResult.content
           }
         }
         
-        await codeEditorApi.writeFile(newFullPath, fileContent, workingDir)
-        await codeEditorApi.deleteFile(oldFullPath, workingDir)
+        await codeEditorApi.writeFile(newFullPath, fileContent, workingDir, currentProjectId)
+        await codeEditorApi.deleteFile(oldFullPath, workingDir, currentProjectId)
         await loadFilesFromBackend()
       } else {
         setFiles(prev => prev.map(f => 
@@ -370,11 +399,13 @@ export function useFileOperations({
       setRenamingFile(null)
       setRenamingFileNameValue('')
     } catch (err: any) {
-      console.error(`Failed to rename file: ${err.message}`)
+      const msg = err?.message || String(err)
+      console.error(`Failed to rename file: ${msg}`)
+      window.alert(`Could not rename: ${msg}`)
       setRenamingFile(null)
       setRenamingFileNameValue('')
     }
-  }, [renamingFile, useFileSystem, localDirectory, getProjectPath, findFile, loadFilesFromBackend, setFiles, setOpenTabs, activeTab, setActiveTab, selectedFile, setSelectedFile, saveCurrentProject, setRenamingFile, setRenamingFileNameValue])
+  }, [renamingFile, currentProjectId, useFileSystem, localDirectory, getProjectPath, findFile, loadFilesFromBackend, setFiles, setOpenTabs, activeTab, setActiveTab, selectedFile, setSelectedFile, saveCurrentProject, setRenamingFile, setRenamingFileNameValue])
 
   const handleRevealInExplorer = useCallback(() => {
     if (!contextMenu) return
@@ -406,10 +437,14 @@ export function useFileOperations({
           : `${targetPath}/${file.name}`
         
         if (useFileSystem) {
+          if (!currentProjectId) {
+            console.error('Create or select a project before uploading files.')
+            return
+          }
           const { codeEditorApi } = await import('../../services/api')
           const workingDir = localDirectory || undefined
           const fullPath = getProjectPath(relativePath)
-          await codeEditorApi.writeFile(fullPath, fileContent, workingDir)
+          await codeEditorApi.writeFile(fullPath, fileContent, workingDir, currentProjectId)
         } else {
           const newFile: FileNode = {
             name: file.name,
@@ -427,7 +462,9 @@ export function useFileOperations({
         saveCurrentProject()
       }
     } catch (err: any) {
+      const msg = err?.message || String(err)
       console.error('Failed to upload files:', err)
+      window.alert(`Could not upload files: ${msg}`)
     }
   }, [projects, currentProjectId, useFileSystem, localDirectory, getProjectPath, loadFilesFromBackend, setFiles, saveCurrentProject])
 

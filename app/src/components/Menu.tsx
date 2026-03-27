@@ -96,7 +96,7 @@ export function Menu({ isAuthenticated, username, currentUser, onLogin, onLogout
         <div className="menu-left">
           <div className="menu-brand">
             <span className="brand-icon">💻</span>
-            <span className="brand-text">Coder Platform</span>
+            <span className="brand-text">Web Coder</span>
           </div>
         </div>
         
@@ -119,7 +119,7 @@ export function Menu({ isAuthenticated, username, currentUser, onLogin, onLogout
               >
                 {currentUser?.profile_image ? (
                   <img 
-                    src={currentUser.profile_image.startsWith('http') ? currentUser.profile_image : `${import.meta.env.VITE_API_URL || 'http://localhost:5174'}${currentUser.profile_image}`}
+                    src={currentUser.profile_image.startsWith('http') ? currentUser.profile_image : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${currentUser.profile_image}`}
                     alt={currentUser.name || username}
                     className="user-avatar-image"
                     onError={(e) => {
@@ -141,7 +141,7 @@ export function Menu({ isAuthenticated, username, currentUser, onLogin, onLogout
                   <div className="dropdown-header">
                     {currentUser?.profile_image ? (
                       <img 
-                        src={currentUser.profile_image.startsWith('http') ? currentUser.profile_image : `${import.meta.env.VITE_API_URL || 'http://localhost:5174'}${currentUser.profile_image}`}
+                        src={currentUser.profile_image.startsWith('http') ? currentUser.profile_image : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${currentUser.profile_image}`}
                         alt={currentUser.name || username}
                         className="dropdown-avatar-image"
                         onError={(e) => {
@@ -210,12 +210,13 @@ export function Menu({ isAuthenticated, username, currentUser, onLogin, onLogout
             <form onSubmit={handleLogin} className="auth-form">
               {error && <div className="form-error">{error}</div>}
               <div className="form-group">
-                <label>Username</label>
+                <label>Username or email</label>
                 <input
                   type="text"
                   value={loginForm.username}
                   onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-                  placeholder="Enter username"
+                  placeholder="Username or email address"
+                  autoComplete="username"
                   required
                 />
               </div>

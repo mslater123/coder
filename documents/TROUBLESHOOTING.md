@@ -74,7 +74,7 @@ kill -9 <PID>
 
 ### 6. Verify CORS Configuration
 
-The backend should have CORS configured in `app.py`:
+The backend should have CORS configured in `backend/src/application.py` (inside `create_app()`):
 ```python
 CORS(app, 
      origins="*",

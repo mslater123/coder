@@ -135,7 +135,7 @@ export function UserManagement({ onClose, currentUser, currentUserObj, onUserUpd
       if (user.profile_image.startsWith('http')) {
         return user.profile_image
       }
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5174'
+      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000'
       return `${apiBase}${user.profile_image}`
     }
     return ''

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Bitcoin Tracker Backend Startup Script
+# Coder backend startup script
 # This script sets up and runs the Flask backend server
 
 set -e  # Exit on error
@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
-echo -e "${GREEN}=== Bitcoin Tracker Backend Startup ===${NC}"
+echo -e "${GREEN}=== Coder Backend Startup ===${NC}"
 echo ""
 
 # Check if Python 3 is installed

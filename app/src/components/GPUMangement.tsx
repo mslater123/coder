@@ -14,7 +14,7 @@ export function GPUMangement({ onClose }: GPUMangementProps) {
   const [error, setError] = useState<string | null>(null)
   const [selectedGpu, setSelectedGpu] = useState<number | null>(null)
   const [showAssignModal, setShowAssignModal] = useState(false)
-  const [taskForm, setTaskForm] = useState({ task_type: 'mining', task_name: '' })
+  const [taskForm, setTaskForm] = useState({ task_type: 'ai_inference', task_name: '' })
 
   useEffect(() => {
     fetchGPUs()
@@ -66,7 +66,7 @@ export function GPUMangement({ onClose }: GPUMangementProps) {
     try {
       await gpuApi.assignTask(selectedGpu, taskForm.task_type, taskForm.task_name)
       setShowAssignModal(false)
-      setTaskForm({ task_type: 'mining', task_name: '' })
+      setTaskForm({ task_type: 'ai_inference', task_name: '' })
       await fetchGPUs()
       await fetchTasks()
     } catch (err) {
@@ -230,7 +230,6 @@ export function GPUMangement({ onClose }: GPUMangementProps) {
                   onChange={(e) => setTaskForm({ ...taskForm, task_type: e.target.value })}
                   className="form-select"
                 >
-                  <option value="mining">Bitcoin Mining</option>
                   <option value="ai_training">AI Training</option>
                   <option value="ai_inference">AI Inference</option>
                   <option value="system_task">System Task</option>

@@ -40,7 +40,7 @@ export function UserSettings({ show, onClose, currentUser, onUserUpdated }: User
       if (currentUser.profile_image.startsWith('http')) {
         return currentUser.profile_image
       }
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5174'
+      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000'
       return `${apiBase}${currentUser.profile_image}`
     }
     return ''

@@ -5,11 +5,11 @@ The GPU client detects GPUs on the system and executes jobs assigned by the back
 ## Features
 
 - **Auto-detection**: Automatically detects NVIDIA GPUs using `nvidia-smi`
-- **Job Execution**: Executes various types of jobs:
-  - **Mining**: Bitcoin mining on GPU or CPU
-  - **AI Training**: Machine learning model training
-  - **AI Inference**: Model inference/prediction
-  - **System Tasks**: General CPU/GPU tasks
+- **Job execution**: Runs assigned work:
+  - **AI Training**: machine learning training
+  - **AI Inference**: inference / prediction
+  - **System tasks**: scripts and general CPU/GPU work
+  - **Ollama / LLM** flows when the backend assigns them
 - **Progress Reporting**: Reports job progress to backend in real-time
 - **Error Handling**: Gracefully handles errors and reports them
 
@@ -50,29 +50,9 @@ The GPU client detects GPUs on the system and executes jobs assigned by the back
 docker-compose up -d
 ```
 
-## Job Types
+## Job types
 
-### 1. Bitcoin Mining
-
-Executes SHA-256 hashing for Bitcoin mining.
-
-**Configuration**:
-```json
-{
-  "task_type": "mining",
-  "task_name": "BTC Mining",
-  "config": {
-    "difficulty": 4
-  }
-}
-```
-
-**Execution**:
-- Uses CUDA if available (PyCUDA)
-- Falls back to CPU mining if CUDA unavailable
-- Reports hash rate and progress
-
-### 2. AI Training
+### 1. AI Training
 
 Trains machine learning models using PyTorch.
 
@@ -94,7 +74,7 @@ Trains machine learning models using PyTorch.
 - Falls back to CPU if GPU unavailable
 - Reports training loss and epoch progress
 
-### 3. AI Inference
+### 2. AI Inference
 
 Runs model inference for predictions.
 
@@ -116,7 +96,7 @@ Runs model inference for predictions.
 - Processes batches on GPU/CPU
 - Reports throughput and progress
 
-### 4. System Task
+### 3. System task
 
 Executes general system tasks (scripts, commands, or CPU work).
 
@@ -162,7 +142,7 @@ Executes general system tasks (scripts, commands, or CPU work).
 ┌───▼────┐        ┌────▼────┐
 │ GPU 0  │        │ GPU 1   │
 │        │        │         │
-│ Mining │        │ AI Train │
+│ Infer  │        │ Train   │
 └────────┘        └─────────┘
 ```
 
@@ -181,7 +161,6 @@ Executes general system tasks (scripts, commands, or CPU work).
 Jobs report progress with:
 - **Progress percentage** (0-100)
 - **Metadata** (job-specific data):
-  - Mining: hash rate, total hashes
   - AI Training: epoch, loss
   - AI Inference: batch, throughput
   - System Task: iterations, elapsed time
@@ -217,7 +196,6 @@ docker logs gpu-client-default
 ### Optional Dependencies
 
 For GPU acceleration:
-- `pycuda`: CUDA support for mining
 - `torch`: PyTorch for AI tasks
 - `torchvision`: Vision models
 

@@ -132,6 +132,13 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
     }
   }, [])
 
+  // Creating a file/folder always needs the tree visible (MenuBar / ⌘N / ⋮ / context menu).
+  useEffect(() => {
+    if (editingFileName || editingFolderName) {
+      setExplorerExpanded(true)
+    }
+  }, [editingFileName, editingFolderName])
+
   // Load saved expanded folders when component mounts or project changes
   useEffect(() => {
     // Always use saved expanded folders (empty array if none saved = all collapsed)
@@ -306,11 +313,12 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   // Folders are collapsed by default - only expand based on saved state
   // No auto-expansion - user must manually expand folders
   const renderFileTree = (nodes: FileNode[], level = 0, index = 0) => {
-    // Safety check: ensure nodes is an array
-    if (!Array.isArray(nodes) || nodes.length === 0) {
+    // Empty array at root must still render (e.g. new project + ⋮ "New File", or root with no children yet).
+    // Only bail on non-arrays.
+    if (!Array.isArray(nodes)) {
       return null
     }
-    
+
     // Prevent excessive nesting (safety check for malformed data)
     if (level > 100) {
       if (import.meta.env.DEV) {
@@ -834,8 +842,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
               </span>
             )}
           </div>
-            {node.type === 'folder' && node.children && node.children.length > 0 && (
-            isFolderExpanded(node.path) ? (
+            {node.type === 'folder' && isFolderExpanded(node.path) && (
               <div className="file-tree-children">
                 {renderFileTree(node.children || [], level + 1, 0)}
               {/* Show inline input for new file if editing in this folder */}
@@ -929,7 +936,6 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                 </div>
               )}
               </div>
-            ) : null
           )}
         </div>
       )
@@ -1421,19 +1427,18 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
           }}
         >
           {(() => {
-            // Safety check: ensure files is an array
-            if (!Array.isArray(files) || files.length === 0) {
+            if (!Array.isArray(files)) {
               return null
             }
-            
             // If files has a single root node that matches the project name, render its children instead
-            // Check if the first file is the project root folder
-            if (files.length === 1 && files[0]?.path === projectInfo.projectRootPath && files[0]?.type === 'folder' && files[0]?.children) {
-              // Render the project folder's children directly, skipping the project folder itself
+            if (
+              files.length === 1 &&
+              files[0]?.path === projectInfo.projectRootPath &&
+              files[0]?.type === 'folder'
+            ) {
               return renderFileTree(files[0].children || [], 0, 0)
             }
-            // Otherwise render files normally
-            return renderFileTree(files, 0, 0)
+            return renderFileTree(files.length === 0 ? [] : files, 0, 0)
           })()}
           </div>
         )}
